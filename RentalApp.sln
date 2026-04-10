@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarterApp", "StarterApp\StarterApp.csproj", "{9029286B-0F5B-4F9B-9F8D-ED5E0ED91CC3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalApp", "RentalApp\RentalApp.csproj", "{9029286B-0F5B-4F9B-9F8D-ED5E0ED91CC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarterApp.Database", "StarterApp.Database\StarterApp.Database.csproj", "{63F5972E-E11D-49EE-821E-62FFA961BC0D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalApp.Database", "RentalApp.Database\RentalApp.Database.csproj", "{63F5972E-E11D-49EE-821E-62FFA961BC0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StarterApp.Migrations", "StarterApp.Migrations\StarterApp.Migrations.csproj", "{56596C37-4445-4915-8BA5-F9DADDE70F15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentalApp.Migrations", "RentalApp.Migrations\RentalApp.Migrations.csproj", "{56596C37-4445-4915-8BA5-F9DADDE70F15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
