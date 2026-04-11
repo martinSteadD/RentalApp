@@ -1,14 +1,29 @@
-public class ApiClient
-{
-    private readonly ApiAuthService _auth;
+using Microsoft.Maui.Storage;
 
-    public ApiClient(ApiAuthService auth)
+namespace RentalApp.Services;
+
+public class TokenStore
+{
+    private const string TokenKey = "auth_token";
+
+    public async Task SaveTokenAsync(string token)
     {
-        _auth = auth;
+        await SecureStorage.SetAsync(TokenKey, token);
     }
 
-    public async Task<string> GetAsync(string endpoint)
+    public async Task<string?> GetTokenAsync()
     {
-        return $"Simulated GET {endpoint} with token {_auth.JwtToken}";
+        return await SecureStorage.GetAsync(TokenKey);
+    }
+
+    public void ClearToken()
+    {
+        SecureStorage.Remove(TokenKey);
+    }
+
+    public async Task<bool> IsLoggedInAsync()
+    {
+        var token = await GetTokenAsync();
+        return !string.IsNullOrWhiteSpace(token);
     }
 }

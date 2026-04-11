@@ -1,20 +1,46 @@
-using RentalApp.Helpers;
+using Microsoft.Maui.Storage;
 
 namespace RentalApp.Services;
 
 public class ApiAuthService
 {
-    public async Task<bool> LoginAsync(string username, string password)
-    {
-        // TODO: Replace with real API call later
-        await Task.Delay(100); // simulate network delay
+    private readonly ApiClient _apiClient;
 
-        TokenStore.JwtToken = "dummy-token";
+    public ApiAuthService(ApiClient apiClient)
+    {
+        _apiClient = apiClient;
+    }
+
+    // LOGIN
+    public async Task<LoginResponse?> LoginAsync(LoginRequest request)
+    {
+        return await _apiClient.PostAsync<LoginRequest, LoginResponse>("auth/token", request);
+    }
+
+
+    // REGISTER
+    public async Task<RegisterResponse?> RegisterAsync(RegisterRequest request)
+    {
+        return await _apiClient.PostAsync<RegisterRequest, RegisterResponse>("auth/register", request);
+    }
+
+
+    // LOAD TOKEN ON APP START
+    public async Task<bool> LoadSavedTokenAsync()
+    {
+        var token = await SecureStorage.GetAsync("auth_token");
+
+        if (string.IsNullOrWhiteSpace(token))
+            return false;
+
+        await _apiClient.SetTokenAsync(token);
         return true;
     }
 
-    public void Logout()
+    // LOGOUT
+    public async Task LogoutAsync()
     {
-        TokenStore.JwtToken = null;
+        SecureStorage.Remove("auth_token");
+        await _apiClient.SetTokenAsync(null);
     }
 }

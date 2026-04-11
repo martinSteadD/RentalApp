@@ -109,6 +109,7 @@ public partial class RegisterViewModel : BaseViewModel
         }
     }
 
+
     /// @brief Navigates back to the login page
     /// @details Relay command that returns to the login page
     /// @return A task representing the asynchronous navigation operation

@@ -298,7 +298,7 @@ public partial class UserDetailViewModel : INotifyPropertyChanged
     /// Gets whether the current user can be deleted (not new user and not the currently logged-in user).
     /// </summary>
     /// <value>True if the user can be deleted, false otherwise</value>
-    public bool CanDeleteCurrentUser => !IsNewUser && _currentUser?.Id != _authService.CurrentUser?.Id;
+    public bool CanDeleteCurrentUser => !IsNewUser;
 
     #endregion
 
@@ -340,12 +340,7 @@ public partial class UserDetailViewModel : INotifyPropertyChanged
     /// <exception cref="UnauthorizedAccessException">Thrown when user doesn't have admin role</exception>
     private async Task LoadUserAsync()
     {
-        if (!_authService.HasRole(RoleConstants.Admin))
-        {
-            await _navigationService.NavigateToAsync("MainPage");
-            return;
-        }
-
+        
         IsLoading = true;
         try
         {

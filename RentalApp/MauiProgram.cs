@@ -20,11 +20,20 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        // Your local DB (website backend) — safe to leave
         builder.Services.AddDbContext<AppDbContext>();
 
+        // Your existing local services — safe to leave
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
+        // Coursework API services
+        builder.Services.AddSingleton<ApiClient>();
+        builder.Services.AddSingleton<ApiAuthService>();
+        builder.Services.AddSingleton<TokenStore>();
+
+
+        // ViewModels + Views
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<App>();
