@@ -1,4 +1,6 @@
 using Microsoft.Maui.Storage;
+using RentalApp.Models;
+
 
 namespace RentalApp.Services;
 
@@ -36,6 +38,17 @@ public class ApiAuthService
         await _apiClient.SetTokenAsync(token);
         return true;
     }
+
+    public async Task<UserProfile?> GetCurrentUserAsync(string token)
+    {
+        // Tell ApiClient to use the token
+        await _apiClient.SetTokenAsync(token);
+
+        // Call GET /users/me using the ApiClient helper
+        return await _apiClient.GetAsync<UserProfile>("users/me");
+    }
+
+
 
     // LOGOUT
     public async Task LogoutAsync()

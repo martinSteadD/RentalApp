@@ -571,7 +571,7 @@ public partial class UserDetailViewModel : INotifyPropertyChanged
     {
         if (_currentUser == null) return;
 
-        var result = await Application.Current!.MainPage!.DisplayAlert(
+        var result = await Shell.Current.DisplayAlert(
             "Confirm Delete",
             $"Are you sure you want to delete user '{_currentUser.FullName}'? This action cannot be undone.",
             "Delete",

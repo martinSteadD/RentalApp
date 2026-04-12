@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RentalApp.Views.ProfilePage"
+             Title="My Profile">
+<ContentPage.ToolbarItems>
+    <ToolbarItem Text="Logout"
+                 IconImageSource="logout.png"
+                 Command="{Binding LogoutCommand}" />
+</ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Purple Header Card -->
+            <Frame BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                   CornerRadius="20"
+                   Padding="20"
+                   HasShadow="True">
+
+                <VerticalStackLayout Spacing="6">
+
+                    <!-- Full Name -->
+                    <Label Text="{Binding FullName}"
+                           FontSize="26"
+                           TextColor="White"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+
+                    <!-- Email -->
+                    <Label Text="{Binding CurrentUser.Email}"
+                           FontSize="14"
+                           TextColor="White"
+                           Opacity="0.9"
+                           HorizontalOptions="Center" />
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Info Card -->
+            <Frame BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                   CornerRadius="16"
+                   Padding="20"
+                   HasShadow="True">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <!-- Joined -->
+                    <Grid ColumnDefinitions="30,*">
+                        <Label Text="📅" FontSize="20" />
+                        <Label Grid.Column="1"
+                               Text="{Binding CurrentUser.CreatedAt, StringFormat='Joined: {0:dd MMM yyyy}'}"
+                               FontSize="16" />
+                    </Grid>
+
+                    <!-- Rating -->
+                    <Grid ColumnDefinitions="30,*">
+                        <Label Text="⭐" FontSize="20" />
+                        <Label Grid.Column="1"
+                               Text="{Binding DisplayRating}"
+                               FontSize="16" />
+                    </Grid>
+
+                    <!-- Items Listed -->
+                    <Grid ColumnDefinitions="30,*">
+                        <Label Text="📦" FontSize="20" />
+                        <Label Grid.Column="1"
+                               Text="{Binding CurrentUser.ItemsListed, StringFormat='Items Listed: {0}'}"
+                               FontSize="16" />
+                    </Grid>
+
+                    <!-- Rentals Completed -->
+                    <Grid ColumnDefinitions="30,*">
+                        <Label Text="🔄" FontSize="20" />
+                        <Label Grid.Column="1"
+                               Text="{Binding CurrentUser.RentalsCompleted, StringFormat='Rentals Completed: {0}'}"
+                               FontSize="16" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Frame>
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

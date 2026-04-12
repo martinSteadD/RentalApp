@@ -1,4 +1,6 @@
 using System.Text.Json;
+using RentalApp.Models;
+
 
 namespace RentalApp.Services;
 
@@ -54,6 +56,17 @@ public class AuthenticationService : IAuthenticationService
         // Registration succeeded — API returns the created user object
         return new AuthenticationResult(true, "Registration successful");
     }
+
+    public async Task<UserProfile?> GetCurrentUserAsync()
+    {
+        var token = await _tokenStore.GetTokenAsync();
+        if (string.IsNullOrWhiteSpace(token))
+            return null;
+
+        return await _apiAuthService.GetCurrentUserAsync(token);
+    }
+
+
 
     public Task LogoutAsync()
     {

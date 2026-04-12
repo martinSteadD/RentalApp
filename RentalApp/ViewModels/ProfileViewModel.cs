@@ -5,18 +5,17 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RentalApp.Database.Models;
 using RentalApp.Services;
+using RentalApp.Models;
 
 namespace RentalApp.ViewModels;
 
 public partial class ProfileViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService _authService;
-    private readonly INavigationService _navigationService;
-
     [ObservableProperty]
-    private User? currentUser;
+    [NotifyPropertyChangedFor(nameof(FullName))]
+    [NotifyPropertyChangedFor(nameof(DisplayRating))]
+    private UserProfile? currentUser;
 
     [ObservableProperty]
     private string currentPassword = string.Empty;
@@ -30,26 +29,42 @@ public partial class ProfileViewModel : BaseViewModel
     [ObservableProperty]
     private bool isChangingPassword;
 
-    public ProfileViewModel(IAuthenticationService authService, INavigationService navigationService)
-    {
-        _authService = authService;
-        _navigationService = navigationService;
-        Title = "Profile";
+    public string FullName =>
+        $"{CurrentUser?.FirstName} {CurrentUser?.LastName}".Trim();
 
+    public string DisplayRating =>
+        CurrentUser?.AverageRating.HasValue == true
+            ? $"Rating: {CurrentUser.AverageRating:0.0}"
+            : "Rating: N/A";
+
+    public ProfileViewModel(IAuthenticationService authService, INavigationService navigationService)
+        : base(authService, navigationService)
+    {
+        Title = "Profile";
         LoadUserData();
     }
 
-    private void LoadUserData()
+    private async void LoadUserData()
     {
-        // CurrentUser = _authService.CurrentUser; // removed: no user object available yet
-        CurrentUser = null; // temporary until /auth/me is implemented
+        var user = await _authService.GetCurrentUserAsync();
+
+        if (user is null)
+        {
+            await Shell.Current.DisplayAlert(
+                "Error",
+                "Unable to load your profile information.",
+                "OK");
+            return;
+        }
+
+        CurrentUser = user;
     }
 
     [RelayCommand]
     private async Task ChangePasswordAsync()
     {
         // Password change is not supported in the coursework API
-        await Application.Current.MainPage.DisplayAlert(
+        await Shell.Current.DisplayAlert(
             "Not Available",
             "Password change is not supported in this version of the app.",
             "OK");

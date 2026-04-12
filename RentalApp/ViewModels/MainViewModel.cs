@@ -1,17 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RentalApp.Database.Models;
+using RentalApp.Models;
 using RentalApp.Services;
 
 namespace RentalApp.ViewModels;
 
 public partial class MainViewModel : BaseViewModel
 {
-    private readonly IAuthenticationService _authService;
-    private readonly INavigationService _navigationService;
-
     [ObservableProperty]
-    private User? currentUser;
+    private UserProfile? currentUser;
 
     [ObservableProperty]
     private string welcomeMessage = string.Empty;
@@ -19,49 +16,46 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty]
     private bool isAdmin;
 
-    public MainViewModel()
-    {
-        Title = "Dashboard";
-    }
-
     public MainViewModel(IAuthenticationService authService, INavigationService navigationService)
+        : base(authService, navigationService)
     {
-        _authService = authService;
-        _navigationService = navigationService;
         Title = "Dashboard";
-
         LoadUserData();
     }
 
-    private void LoadUserData()
+    private async void LoadUserData()
     {
-        // TEMPORARY: No user info available until we implement /auth/me
-        CurrentUser = null;
-        IsAdmin = false;
-
-        WelcomeMessage = "Welcome!";
-    }
-
-    [RelayCommand]
-    private async Task LogoutAsync()
-    {
-        var result = await Application.Current.MainPage.DisplayAlert(
-            "Logout",
-            "Are you sure you want to logout?",
-            "Yes",
-            "No");
-
-        if (result)
+        try
         {
-            await _authService.LogoutAsync();
-            await _navigationService.NavigateToAsync("LoginPage");
+            UserProfile? user = await _authService.GetCurrentUserAsync();
+
+            if (user is null)
+            {
+                WelcomeMessage = "Welcome!";
+                CurrentUser = null;
+                IsAdmin = false;
+                return;
+            }
+
+            CurrentUser = user;
+            WelcomeMessage = $"Welcome, {user.FirstName}!";
+
+            // TODO: Add role support when API includes it
+            IsAdmin = false;
+        }
+        catch (Exception ex)
+        {
+            SetError($"Failed to load user data: {ex.Message}");
+            WelcomeMessage = "Welcome!";
+            CurrentUser = null;
+            IsAdmin = false;
         }
     }
 
     [RelayCommand]
     private async Task NavigateToProfileAsync()
     {
-        await _navigationService.NavigateToAsync("TempPage");
+        await Shell.Current.GoToAsync("ProfilePage");
     }
 
     [RelayCommand]
@@ -75,7 +69,7 @@ public partial class MainViewModel : BaseViewModel
     {
         if (!IsAdmin)
         {
-            await Application.Current.MainPage.DisplayAlert(
+            await Shell.Current.DisplayAlert(
                 "Access Denied",
                 "You don't have permission to access admin features.",
                 "OK");
