@@ -12,6 +12,8 @@ namespace RentalApp.ViewModels;
 
 public partial class ProfileViewModel : BaseViewModel
 {
+    private readonly TokenStore _tokenStore;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FullName))]
     [NotifyPropertyChangedFor(nameof(DisplayRating))]
@@ -37,33 +39,57 @@ public partial class ProfileViewModel : BaseViewModel
             ? $"Rating: {CurrentUser.AverageRating:0.0}"
             : "Rating: N/A";
 
-    public ProfileViewModel(IAuthenticationService authService, INavigationService navigationService)
+    public ProfileViewModel(
+        IAuthenticationService authService,
+        INavigationService navigationService,
+        TokenStore tokenStore)
         : base(authService, navigationService)
     {
+        _tokenStore = tokenStore;
         Title = "Profile";
         LoadUserData();
     }
 
     private async void LoadUserData()
     {
-        var user = await _authService.GetCurrentUserAsync();
+        try
+        {
+            var token = await _tokenStore.GetTokenAsync();
 
-        if (user is null)
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "You are not logged in.",
+                    "OK");
+                return;
+            }
+
+            var user = await _authService.GetCurrentUserAsync(token);
+
+            if (user is null)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "Unable to load your profile information.",
+                    "OK");
+                return;
+            }
+
+            CurrentUser = user;
+        }
+        catch (Exception ex)
         {
             await Shell.Current.DisplayAlert(
                 "Error",
-                "Unable to load your profile information.",
+                $"Failed to load profile: {ex.Message}",
                 "OK");
-            return;
         }
-
-        CurrentUser = user;
     }
 
     [RelayCommand]
     private async Task ChangePasswordAsync()
     {
-        // Password change is not supported in the coursework API
         await Shell.Current.DisplayAlert(
             "Not Available",
             "Password change is not supported in this version of the app.",

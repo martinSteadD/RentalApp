@@ -6,6 +6,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RentalApp.Services;
+using RentalApp.Models;
 using System.Text.RegularExpressions;
 
 namespace RentalApp.ViewModels;
@@ -33,14 +34,12 @@ public partial class RegisterViewModel : BaseViewModel
     [ObservableProperty]
     private bool acceptTerms;
 
-    /// @brief Default constructor for design-time support
     public RegisterViewModel()
         : base(null!, null!) // design-time only
     {
         Title = "Register";
     }
 
-    /// @brief Runtime constructor
     public RegisterViewModel(IAuthenticationService authService, INavigationService navigationService)
         : base(authService, navigationService)
     {
@@ -61,11 +60,20 @@ public partial class RegisterViewModel : BaseViewModel
             IsBusy = true;
             ClearError();
 
-            var result = await _authService.RegisterAsync(FirstName, LastName, Email, Password);
-
-            if (result.IsSuccess)
+            // Build the correct RegisterRequest object
+            var request = new RegisterRequest
             {
-                await Application.Current.MainPage.DisplayAlert(
+                FirstName = FirstName,
+                LastName = LastName,
+                Email = Email,
+                Password = Password
+            };
+
+            var result = await _authService.RegisterAsync(request);
+
+            if (result != null)
+            {
+                await Shell.Current.DisplayAlert(
                     "Success",
                     "Registration successful! Please login.",
                     "OK");
@@ -74,7 +82,7 @@ public partial class RegisterViewModel : BaseViewModel
             }
             else
             {
-                SetError(result.Message);
+                SetError("Registration failed. Please try again.");
             }
         }
         catch (Exception ex)

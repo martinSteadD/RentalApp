@@ -11,9 +11,28 @@
         Route="LoginPage"
         ContentTemplate="{DataTemplate views:LoginPage}" />
 
-    <!-- Profile Page route -->
+    <!-- Main dashboard -->
+    <ShellContent
+        Route="MainPage"
+        ContentTemplate="{DataTemplate views:MainPage}" />
+
+    <!-- Profile Page -->
     <ShellContent
         Route="ProfilePage"
         ContentTemplate="{DataTemplate views:ProfilePage}" />
+
+    <!-- Temp Page -->
+    <ShellContent
+        Route="TempPage"
+        ContentTemplate="{DataTemplate views:TempPage}" />
+
+    <!-- Admin pages -->
+    <ShellContent
+        Route="UserListPage"
+        ContentTemplate="{DataTemplate views:UserListPage}" />
+
+    <ShellContent
+        Route="UserDetailPage"
+        ContentTemplate="{DataTemplate views:UserDetailPage}" />
 
 </Shell>

@@ -57,7 +57,8 @@ public partial class BaseViewModel : ObservableObject
         if (result)
         {
             await _authService.LogoutAsync();
-            await _navigationService.NavigateToAsync("LoginPage");
+            await Shell.Current.GoToAsync("//LoginPage");
+
         }
     }
 }
