@@ -40,7 +40,8 @@ namespace RentalApp.ViewModels
         [RelayCommand]
         private async Task NavigateToSettingsAsync()
         {
-            await _navigationService.NavigateToAsync("TempPage");
+            await _navigationService.NavigateToAsync("SettingsPage");
+
         }
 
     }

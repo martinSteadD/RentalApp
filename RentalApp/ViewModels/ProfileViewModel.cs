@@ -47,10 +47,12 @@ public partial class ProfileViewModel : BaseViewModel
     {
         _tokenStore = tokenStore;
         Title = "Profile";
-        LoadUserData();
+
+        _ = LoadUserDataAsync();
     }
 
-    private async void LoadUserData()
+
+    private async Task LoadUserDataAsync()
     {
         try
         {
@@ -110,7 +112,8 @@ public partial class ProfileViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateBackAsync()
     {
-        await _navigationService.NavigateBackAsync();
+        await Shell.Current.GoToAsync("..");
+
     }
 
     private bool ValidatePasswordChange()

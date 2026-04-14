@@ -26,14 +26,15 @@ public partial class MainViewModel : BaseViewModel
     {
         _tokenStore = tokenStore;
         Title = "Dashboard";
-        LoadUserData();
+
+        // Fire-and-forget safely
+        _ = LoadUserDataAsync();
     }
 
-    private async void LoadUserData()
+    private async Task LoadUserDataAsync()
     {
         try
         {
-            // Get token from TokenStore
             var token = await _tokenStore.GetTokenAsync();
 
             if (string.IsNullOrWhiteSpace(token))
@@ -44,8 +45,7 @@ public partial class MainViewModel : BaseViewModel
                 return;
             }
 
-            // Fetch user from API
-            UserProfile? user = await _authService.GetCurrentUserAsync(token);
+            var user = await _authService.GetCurrentUserAsync(token);
 
             if (user is null)
             {
@@ -79,7 +79,7 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToSettingsAsync()
     {
-        await _navigationService.NavigateToAsync("TempPage");
+        await Shell.Current.GoToAsync("//SettingsPage");
     }
 
     [RelayCommand]
@@ -94,7 +94,7 @@ public partial class MainViewModel : BaseViewModel
             return;
         }
 
-        await _navigationService.NavigateToAsync("UserListPage");
+        await Shell.Current.GoToAsync("UserListPage");
     }
 
     [RelayCommand]
@@ -103,8 +103,7 @@ public partial class MainViewModel : BaseViewModel
         try
         {
             IsBusy = true;
-            LoadUserData();
-            await Task.Delay(1000);
+            await LoadUserDataAsync();
         }
         catch (Exception ex)
         {

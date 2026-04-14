@@ -21,6 +21,11 @@
         Route="ProfilePage"
         ContentTemplate="{DataTemplate views:ProfilePage}" />
 
+    <!-- Settings Page -->
+    <ShellContent
+        Route="SettingsPage"
+        ContentTemplate="{DataTemplate views:SettingsPage}" />
+
     <!-- Temp Page -->
     <ShellContent
         Route="TempPage"
