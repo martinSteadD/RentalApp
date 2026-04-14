@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using RentalApp.ViewModels;
 using RentalApp.Database.Data;
 using RentalApp.Views;
@@ -26,12 +27,18 @@ public static class MauiProgram
         // Your existing local services — safe to leave
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
+        builder.Services.AddSingleton<IItemService, ItemService>();
+
+        builder.Services.AddSingleton<HttpClient>(sp =>
+        new HttpClient
+        {
+            BaseAddress = new Uri("https://set09102-api.b-davison.workers.dev")
+        });
 
         // Coursework API services
         builder.Services.AddSingleton<ApiClient>();
         builder.Services.AddSingleton<ApiAuthService>();
         builder.Services.AddSingleton<TokenStore>();
-
 
         // ViewModels + Views
         builder.Services.AddSingleton<AppShellViewModel>();
@@ -53,7 +60,14 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<SettingsPage>();
-
+        builder.Services.AddTransient<BrowseItemsViewModel>();
+        builder.Services.AddTransient<BrowseItemsPage>();
+        builder.Services.AddTransient<ItemDetailPage>();
+        builder.Services.AddTransient<ItemDetailViewModel>();
+        builder.Services.AddTransient<MyItemsPage>();
+        builder.Services.AddTransient<MyItemsViewModel>();
+        builder.Services.AddTransient<CreateItemPage>();
+        builder.Services.AddTransient<CreateItemViewModel>();
 
 
         builder.Services.AddSingleton<TempViewModel>();

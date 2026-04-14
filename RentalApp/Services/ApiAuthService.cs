@@ -1,33 +1,45 @@
 using Microsoft.Maui.Storage;
 using RentalApp.Models;
 
-
 namespace RentalApp.Services;
 
-public class ApiAuthService
+public class ApiAuthService : IAuthenticationService
 {
     private readonly ApiClient _apiClient;
+
+    // ⭐ This is the logged-in user available to all ViewModels
+    public UserProfile? CurrentUser { get; private set; }
 
     public ApiAuthService(ApiClient apiClient)
     {
         _apiClient = apiClient;
     }
 
-    // LOGIN
+    // ⭐ LOGIN
     public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
-        return await _apiClient.PostAsync<LoginRequest, LoginResponse>("auth/token", request);
+        var response = await _apiClient.PostAsync<LoginRequest, LoginResponse>("auth/token", request);
+
+        if (response == null || string.IsNullOrWhiteSpace(response.Token))
+            return null;
+
+        // Save token
+        await SecureStorage.SetAsync("auth_token", response.Token);
+        await _apiClient.SetTokenAsync(response.Token);
+
+        // Load user profile from /users/me
+        CurrentUser = await GetCurrentUserAsync(response.Token);
+
+        return response;
     }
 
-
-    // REGISTER
+    // ⭐ REGISTER
     public async Task<RegisterResponse?> RegisterAsync(RegisterRequest request)
     {
         return await _apiClient.PostAsync<RegisterRequest, RegisterResponse>("auth/register", request);
     }
 
-
-    // LOAD TOKEN ON APP START
+    // ⭐ LOAD TOKEN ON APP START
     public async Task<bool> LoadSavedTokenAsync()
     {
         var token = await SecureStorage.GetAsync("auth_token");
@@ -36,24 +48,34 @@ public class ApiAuthService
             return false;
 
         await _apiClient.SetTokenAsync(token);
-        return true;
+
+        // Load user profile
+        CurrentUser = await GetCurrentUserAsync(token);
+
+        return CurrentUser != null;
     }
 
+    // ⭐ GET CURRENT USER FROM /users/me
     public async Task<UserProfile?> GetCurrentUserAsync(string token)
     {
-        // Tell ApiClient to use the token
         await _apiClient.SetTokenAsync(token);
 
-        // Call GET /users/me using the ApiClient helper
-        return await _apiClient.GetAsync<UserProfile>("users/me");
+        try
+        {
+            return await _apiClient.GetAsync<UserProfile>("users/me");
+        }
+        catch
+        {
+            return null;
+        }
     }
 
-
-
-    // LOGOUT
+    // ⭐ LOGOUT
     public async Task LogoutAsync()
     {
         SecureStorage.Remove("auth_token");
         await _apiClient.SetTokenAsync(null);
+
+        CurrentUser = null;
     }
 }

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using RentalApp.Models;
 using RentalApp.Services;
 
 namespace RentalApp.ViewModels;
@@ -8,6 +9,9 @@ public partial class BaseViewModel : ObservableObject
 {
     protected readonly IAuthenticationService _authService;
     protected readonly INavigationService _navigationService;
+
+   // Uses UserProfile to get current user
+    public UserProfile? CurrentUser => _authService.CurrentUser;
 
     public BaseViewModel(IAuthenticationService authService, INavigationService navigationService)
     {
@@ -48,7 +52,7 @@ public partial class BaseViewModel : ObservableObject
     [RelayCommand]
     private async Task LogoutAsync()
     {
-        var result = await Shell.Current.DisplayAlert(
+        var result = await Shell.Current.DisplayAlertAsync(
             "Logout",
             "Are you sure you want to logout?",
             "Yes",
@@ -58,7 +62,6 @@ public partial class BaseViewModel : ObservableObject
         {
             await _authService.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
-
         }
     }
 }

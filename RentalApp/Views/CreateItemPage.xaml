@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="RentalApp.Views.CreateItemPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Create Item">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="Add New Item"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <Entry Placeholder="Title"
+                   Text="{Binding Title}" />
+
+            <Editor Placeholder="Description"
+                    AutoSize="TextChanges"
+                    Text="{Binding Description}" />
+
+            <Entry Placeholder="Daily Rate"
+                   Keyboard="Numeric"
+                   Text="{Binding DailyRate}" />
+
+            <Entry Placeholder="Category ID"
+                   Keyboard="Numeric"
+                   Text="{Binding CategoryId}" />
+
+            <Entry Placeholder="Category Name"
+                   Text="{Binding Category}" />
+
+            <Button Text="Create Item"
+                    Command="{Binding CreateItemCommand}"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                    TextColor="White"
+                    CornerRadius="8"
+                    HeightRequest="50" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

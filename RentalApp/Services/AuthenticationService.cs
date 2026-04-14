@@ -7,6 +7,9 @@ public class AuthenticationService : IAuthenticationService
     private readonly ApiAuthService _apiAuthService;
     private readonly TokenStore _tokenStore;
 
+    // ⭐ Forward the CurrentUser property to ApiAuthService
+    public UserProfile? CurrentUser => _apiAuthService.CurrentUser;
+
     public AuthenticationService(ApiAuthService apiAuthService, TokenStore tokenStore)
     {
         _apiAuthService = apiAuthService;
@@ -39,8 +42,8 @@ public class AuthenticationService : IAuthenticationService
         if (string.IsNullOrWhiteSpace(token))
             return false;
 
-        await _apiAuthService.LoadSavedTokenAsync();
-        return true;
+        // ApiAuthService will load CurrentUser internally
+        return await _apiAuthService.LoadSavedTokenAsync();
     }
 
     // GET CURRENT USER
@@ -50,9 +53,9 @@ public class AuthenticationService : IAuthenticationService
     }
 
     // LOGOUT
-    public Task LogoutAsync()
+    public async Task LogoutAsync()
     {
         _tokenStore.ClearToken();
-        return Task.CompletedTask;
+        await _apiAuthService.LogoutAsync();
     }
 }

@@ -4,6 +4,7 @@ namespace RentalApp.Services;
 
 public interface IAuthenticationService
 {
+    UserProfile? CurrentUser { get; }
     Task<LoginResponse?> LoginAsync(LoginRequest request);
     Task<RegisterResponse?> RegisterAsync(RegisterRequest request);
     Task<bool> LoadSavedTokenAsync();

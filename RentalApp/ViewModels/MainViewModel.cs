@@ -7,6 +7,7 @@ namespace RentalApp.ViewModels;
 
 public partial class MainViewModel : BaseViewModel
 {
+    private readonly IItemService _itemService;
     private readonly TokenStore _tokenStore;
 
     [ObservableProperty]
@@ -19,12 +20,15 @@ public partial class MainViewModel : BaseViewModel
     private bool isAdmin;
 
     public MainViewModel(
+        IItemService itemService,
         IAuthenticationService authService,
         INavigationService navigationService,
         TokenStore tokenStore)
         : base(authService, navigationService)
     {
+        _itemService = itemService;
         _tokenStore = tokenStore;
+
         Title = "Dashboard";
 
         // Fire-and-forget safely
@@ -83,11 +87,24 @@ public partial class MainViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    private async Task NavigateToBrowseItemsAsync()
+    {
+        await Shell.Current.GoToAsync("BrowseItemsPage");
+    }
+    [RelayCommand]
+    private async Task NavigateToMyItemsAsync()
+    {
+        await Shell.Current.GoToAsync("MyItemsPage");
+    }
+
+
+
+    [RelayCommand]
     private async Task NavigateToUserListAsync()
     {
         if (!IsAdmin)
         {
-            await Shell.Current.DisplayAlert(
+            await Shell.Current.DisplayAlertAsync(
                 "Access Denied",
                 "You don't have permission to access admin features.",
                 "OK");
