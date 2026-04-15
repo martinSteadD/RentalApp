@@ -1,25 +1,31 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using RentalApp.Models;
+using Microsoft.EntityFrameworkCore;
+using RentalApp.Database.Data;
+using RentalApp.Database.Models;
 using RentalApp.Services;
+using System.Collections.ObjectModel;
 
 namespace RentalApp.ViewModels;
 
 public partial class MyItemsViewModel : BaseViewModel
 {
-    private readonly IItemService _itemService;
+    private readonly AppDbContext _db;
+    private readonly CategoryService _categoryService;
 
     [ObservableProperty]
-    private List<Item> myItems = new();
+    private ObservableCollection<ItemEntity> myItems = new();
 
     public MyItemsViewModel(
-        IItemService itemService,
+        AppDbContext db,
         IAuthenticationService authService,
         INavigationService navigationService,
-        TokenStore tokenStore)
+        CategoryService categoryService)
         : base(authService, navigationService)
     {
-        _itemService = itemService;
+        _db = db;
+        _categoryService = categoryService;
+
         Title = "My Items";
 
         _ = LoadMyItemsAsync();
@@ -32,12 +38,25 @@ public partial class MyItemsViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            var allItems = await _itemService.GetItemsAsync();
-            var userId = CurrentUser.Id;
+            var userId = CurrentUser!.Id;
 
-            MyItems = allItems
+            // Load items from SQLite
+            var items = await _db.Items
                 .Where(i => i.OwnerId == userId)
-                .ToList();
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+
+            // Load categories from API (or local if you later store them)
+            var categories = await _categoryService.GetCategoriesAsync();
+
+            // Map CategoryId -> CategoryName
+            foreach (var item in items)
+            {
+                var cat = categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                item.CategoryName = cat?.Name ?? "Unknown";
+            }
+
+            MyItems = new ObservableCollection<ItemEntity>(items);
         }
         catch (Exception ex)
         {
@@ -50,13 +69,7 @@ public partial class MyItemsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task CreateItemAsync()
-    {
-        await Shell.Current.GoToAsync("CreateItemPage");
-    }
-
-    [RelayCommand]
-    private async Task SelectItemAsync(Item item)
+    private async Task SelectItemAsync(ItemEntity item)
     {
         if (item == null)
             return;

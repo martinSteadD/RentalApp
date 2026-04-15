@@ -9,8 +9,8 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
-            <!-- Item Name -->
-            <Label Text="{Binding Item.Name}"
+            <!-- Item Title -->
+            <Label Text="{Binding Item.Title}"
                    FontSize="28"
                    FontAttributes="Bold" />
 

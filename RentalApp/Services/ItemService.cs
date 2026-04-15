@@ -8,11 +8,13 @@ public class ItemService : IItemService
 {
     private readonly HttpClient _httpClient;
     private readonly TokenStore _tokenStore;
+    private readonly ApiClient _apiClient;
 
-    public ItemService(HttpClient httpClient, TokenStore tokenStore)
+    public ItemService(HttpClient httpClient, TokenStore tokenStore, ApiClient apiClient)
     {
         _httpClient = httpClient;
         _tokenStore = tokenStore;
+        _apiClient = apiClient;
     }
 
     private async Task AddJwtHeaderAsync()
@@ -34,10 +36,13 @@ public class ItemService : IItemService
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<List<Item>>(json, new JsonSerializerOptions
+
+        var result = JsonSerializer.Deserialize<ItemsResponse>(json, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
-        })!;
+        });
+
+        return result?.Items ?? new List<Item>();
     }
 
     public async Task<Item?> GetItemByIdAsync(int id)
@@ -58,17 +63,8 @@ public class ItemService : IItemService
     {
         await AddJwtHeaderAsync();
 
-        var json = JsonSerializer.Serialize(item);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PostAsync("/items", content);
-        if (!response.IsSuccessStatusCode) return null;
-
-        var resultJson = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<Item>(resultJson, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        // Use ApiClient so POST is logged and errors are visible
+        return await _apiClient.PostAsync<Item, Item>("/items", item);
     }
 
     public async Task<bool> UpdateItemAsync(Item item)

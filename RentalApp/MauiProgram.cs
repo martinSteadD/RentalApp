@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using RentalApp.ViewModels;
 using RentalApp.Database.Data;
 using RentalApp.Views;
-using System.Diagnostics;
 using RentalApp.Services;
 
 namespace RentalApp;
@@ -21,19 +21,20 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // Your local DB (website backend) — safe to leave
+        // Register SQLite DbContext
         builder.Services.AddDbContext<AppDbContext>();
 
-        // Your existing local services — safe to leave
+        // Local services
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         builder.Services.AddSingleton<INavigationService, NavigationService>();
         builder.Services.AddSingleton<IItemService, ItemService>();
 
+        // Coursework API HttpClient
         builder.Services.AddSingleton<HttpClient>(sp =>
-        new HttpClient
-        {
-            BaseAddress = new Uri("https://set09102-api.b-davison.workers.dev")
-        });
+            new HttpClient
+            {
+                BaseAddress = new Uri("https://set09102-api.b-davison.workers.dev")
+            });
 
         // Coursework API services
         builder.Services.AddSingleton<ApiClient>();
@@ -68,7 +69,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MyItemsViewModel>();
         builder.Services.AddTransient<CreateItemPage>();
         builder.Services.AddTransient<CreateItemViewModel>();
-
+        builder.Services.AddSingleton<CategoryService>();
 
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
@@ -77,6 +78,16 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        // Build the app
+        var app = builder.Build();
+
+        // Ensure SQLite DB is created
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Database.EnsureCreated();
+        }
+
+        return app;
     }
 }

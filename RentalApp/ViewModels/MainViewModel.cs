@@ -62,8 +62,8 @@ public partial class MainViewModel : BaseViewModel
             CurrentUser = user;
             WelcomeMessage = $"Welcome, {user.FirstName}!";
 
-            // TODO: Add role support when API includes it
-            IsAdmin = false;
+            IsAdmin = user.Email.Equals("xxxxx@rentalapp.com", StringComparison.OrdinalIgnoreCase);
+
         }
         catch (Exception ex)
         {

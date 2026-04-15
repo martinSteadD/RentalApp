@@ -12,24 +12,31 @@
                    FontSize="24"
                    FontAttributes="Bold" />
 
+            <!-- TITLE -->
             <Entry Placeholder="Title"
-                   Text="{Binding Title}" />
+                   Text="{Binding Title}"
+                   Keyboard="Default" />
 
+            <!-- DESCRIPTION -->
             <Editor Placeholder="Description"
                     AutoSize="TextChanges"
                     Text="{Binding Description}" />
 
+            <!-- DAILY RATE -->
             <Entry Placeholder="Daily Rate"
-                   Keyboard="Numeric"
-                   Text="{Binding DailyRate}" />
+                   Keyboard="Telephone"
+                   Text="{Binding DailyRate}"
+                   MaxLength="10"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Center" />
 
-            <Entry Placeholder="Category ID"
-                   Keyboard="Numeric"
-                   Text="{Binding CategoryId}" />
+            <!-- CATEGORY PICKER -->
+            <Picker Title="Select Category"
+                    ItemsSource="{Binding Categories}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedCategory}" />
 
-            <Entry Placeholder="Category Name"
-                   Text="{Binding Category}" />
-
+            <!-- CREATE BUTTON -->
             <Button Text="Create Item"
                     Command="{Binding CreateItemCommand}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"

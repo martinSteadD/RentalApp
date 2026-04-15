@@ -13,6 +13,12 @@ public partial class ItemDetailViewModel : BaseViewModel
     [ObservableProperty]
     private Item item;
 
+    partial void OnItemChanged(Item value)
+    {
+        if (value != null)
+            Title = value.Title; // Update page title dynamically
+    }
+
     public ItemDetailViewModel(
         IItemService itemService,
         IAuthenticationService authService,
