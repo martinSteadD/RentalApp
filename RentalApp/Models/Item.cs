@@ -1,25 +1,47 @@
+using System.Text.Json.Serialization;
+
 namespace RentalApp.Models;
 
 public class Item
 {
     public int Id { get; set; }
-    public string Title { get; set; }
-    public string Description { get; set; }
-    public decimal DailyRate { get; set; }
 
-    public int CategoryId { get; set; }
-    public string Category { get; set; }
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
 
-    public int OwnerId { get; set; }
-    public string OwnerName { get; set; }
-    public double OwnerRating { get; set; }
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
 
-    public bool IsAvailable { get; set; }
-    public double AverageRating { get; set; }
+    [JsonPropertyName("dailyRate")]
+    public decimal? DailyRate { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    [JsonPropertyName("categoryId")]
+    public int? CategoryId { get; set; }
 
-    // Phase 4 (GPS)
-    public double Latitude { get; set; }
-    public double Longitude { get; set; }
+    [JsonPropertyName("category")]
+    public string? Category { get; set; }
+
+    [JsonPropertyName("ownerId")]
+    public int? OwnerId { get; set; }
+
+    [JsonPropertyName("owner")]
+    public string? OwnerName { get; set; }
+
+    [JsonPropertyName("ownerRating")]
+    public double? OwnerRating { get; set; }
+
+    [JsonPropertyName("available")]
+    public bool? IsAvailable { get; set; }
+
+    [JsonPropertyName("rating")]
+    public double? AverageRating { get; set; }
+
+    [JsonPropertyName("createdAt")]
+    public DateTime? CreatedAt { get; set; }
+
+    [JsonPropertyName("latitude")]
+    public double? Latitude { get; set; }
+
+    [JsonPropertyName("longitude")]
+    public double? Longitude { get; set; }
 }

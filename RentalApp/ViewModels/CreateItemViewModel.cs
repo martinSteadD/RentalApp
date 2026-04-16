@@ -98,15 +98,21 @@ public partial class CreateItemViewModel : BaseViewModel
         // Save to local SQLite DB for real persistence
         var entity = new ItemEntity
         {
-            Title = item.Title,
-            Description = item.Description,
-            DailyRate = item.DailyRate,
-            CategoryId = item.CategoryId,
-            OwnerId = item.OwnerId,
-            OwnerName = item.OwnerName,
-            CreatedAt = item.CreatedAt,
-            IsAvailable = true
+            Title = item.Title ?? string.Empty,
+            Description = item.Description ?? string.Empty,
+
+            // Nullable → non-nullable conversions
+            DailyRate = item.DailyRate ?? 0,
+            CategoryId = item.CategoryId ?? 0,
+            OwnerId = item.OwnerId ?? 0,
+
+            OwnerName = item.OwnerName ?? "Unknown",
+
+            CreatedAt = item.CreatedAt ?? DateTime.UtcNow,
+
+            IsAvailable = item.IsAvailable ?? true
         };
+
 
         _db.Items.Add(entity);
         await _db.SaveChangesAsync();

@@ -15,8 +15,9 @@ public partial class BrowseItemsViewModel : BaseViewModel
     private readonly AppDbContext _db;
     private readonly CategoryService _categoryService;
 
-    [ObservableProperty]
-    private ObservableCollection<Item> items = new();
+
+    public ObservableCollection<Item> Items { get; } = new();
+
 
     public BrowseItemsViewModel(
         IItemService itemService,
@@ -33,13 +34,14 @@ public partial class BrowseItemsViewModel : BaseViewModel
 
         Title = "Browse Items";
 
-        _ = LoadItemsAsync();
     }
 
-    private async Task LoadItemsAsync()
+    public async Task LoadItemsAsync()
     {
         try
         {
+            Console.WriteLine("DEBUG: LoadItemsAsync started");
+
             IsBusy = true;
 
             // 1. Load API items
@@ -51,7 +53,7 @@ public partial class BrowseItemsViewModel : BaseViewModel
             // 3. Load categories so we can map CategoryId -> CategoryName
             var categories = await _categoryService.GetCategoriesAsync();
 
-            // 4. Convert ItemEntity -> Item (FIXED)
+            // 4. Convert ItemEntity -> Item
             var localItems = localEntities.Select(e =>
             {
                 var cat = categories.FirstOrDefault(c => c.Id == e.CategoryId);
@@ -80,10 +82,13 @@ public partial class BrowseItemsViewModel : BaseViewModel
                 };
             });
 
-            // 5. Merge API + Local
-            Items = new ObservableCollection<Item>(
-                apiItems.Concat(localItems)
-            );
+            // 5. Merge API + Local (UI FIX)
+            Items.Clear();
+
+            foreach (var item in apiItems.Concat(localItems))
+            {
+                Items.Add(item);
+            }
         }
         catch (Exception ex)
         {

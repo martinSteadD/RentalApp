@@ -10,16 +10,14 @@ public partial class AppShell : Shell
         InitializeComponent();
         BindingContext = viewModel;
 
-        // Register navigation routes
-        Routing.RegisterRoute("ProfilePage", typeof(ProfilePage));
-        Routing.RegisterRoute("TempPage", typeof(TempPage));
-        Routing.RegisterRoute("UserListPage", typeof(UserListPage));
-        Routing.RegisterRoute("UserDetailPage", typeof(UserDetailPage));
-        Routing.RegisterRoute("BrowseItemsPage", typeof(BrowseItemsPage));
-        Routing.RegisterRoute("ItemDetailPage", typeof(ItemDetailPage));
-        Routing.RegisterRoute("MyItemsPage", typeof(MyItemsPage));
-        Routing.RegisterRoute("CreateItemPage", typeof(CreateItemPage));
-
-
+        // Register navigation routes using nameof() so DI resolves pages correctly
+        Routing.RegisterRoute(nameof(ProfilePage), typeof(ProfilePage));
+        Routing.RegisterRoute(nameof(TempPage), typeof(TempPage));
+        Routing.RegisterRoute(nameof(BrowseItemsPage), typeof(BrowseItemsPage));
+        Routing.RegisterRoute(nameof(UserListPage), typeof(UserListPage));
+        Routing.RegisterRoute(nameof(UserDetailPage), typeof(UserDetailPage));
+        Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
+        Routing.RegisterRoute(nameof(MyItemsPage), typeof(MyItemsPage));
+        Routing.RegisterRoute(nameof(CreateItemPage), typeof(CreateItemPage));
     }
 }

@@ -61,8 +61,11 @@ public static class MauiProgram
         builder.Services.AddTransient<ProfilePage>();
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<SettingsPage>();
+
+        // ⭐ IMPORTANT: Browse Items DI registration
         builder.Services.AddTransient<BrowseItemsViewModel>();
         builder.Services.AddTransient<BrowseItemsPage>();
+
         builder.Services.AddTransient<ItemDetailPage>();
         builder.Services.AddTransient<ItemDetailViewModel>();
         builder.Services.AddTransient<MyItemsPage>();

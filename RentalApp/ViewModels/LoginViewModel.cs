@@ -1,12 +1,13 @@
-/// @file LoginViewModel.cs
-/// @brief Login page view model for user authentication
-/// @author RentalApp Development Team
-/// @date 2025
+// @file LoginViewModel.cs
+// @brief Login page view model for user authentication
+// @author RentalApp Development Team
+// @date 2025
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RentalApp.Services;
 using RentalApp.Models;
+using RentalApp.Views; // so nameof(MainPage) / nameof(RegisterPage) resolve
 
 namespace RentalApp.ViewModels;
 
@@ -62,7 +63,9 @@ public partial class LoginViewModel : BaseViewModel
             {
                 await SecureStorage.SetAsync("auth_token", result.Token);
                 await _authService.LoadSavedTokenAsync();
-                await _navigationService.NavigateToAsync("MainPage");
+
+                // DI-safe navigation to MainPage
+                await _navigationService.NavigateToAsync(nameof(MainPage));
             }
             else
             {
@@ -82,7 +85,7 @@ public partial class LoginViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToRegisterAsync()
     {
-        await _navigationService.NavigateToAsync("RegisterPage");
+        await _navigationService.NavigateToAsync(nameof(RegisterPage));
     }
 
     [RelayCommand]

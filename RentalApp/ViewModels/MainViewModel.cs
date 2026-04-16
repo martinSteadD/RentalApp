@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using RentalApp.Models;
 using RentalApp.Services;
+using RentalApp.Views;
+
 
 namespace RentalApp.ViewModels;
 
@@ -77,27 +79,27 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToProfileAsync()
     {
-        await Shell.Current.GoToAsync("ProfilePage");
+        await Shell.Current.GoToAsync(nameof(ProfilePage));
     }
 
     [RelayCommand]
     private async Task NavigateToSettingsAsync()
     {
-        await Shell.Current.GoToAsync("//SettingsPage");
+        await Shell.Current.GoToAsync(nameof(SettingsPage));
     }
 
     [RelayCommand]
     private async Task NavigateToBrowseItemsAsync()
     {
-        await Shell.Current.GoToAsync("BrowseItemsPage");
+        // ⭐ FIXED: Use nameof() so DI resolves BrowseItemsPage correctly
+        await Shell.Current.GoToAsync(nameof(BrowseItemsPage));
     }
+
     [RelayCommand]
     private async Task NavigateToMyItemsAsync()
     {
-        await Shell.Current.GoToAsync("MyItemsPage");
+        await Shell.Current.GoToAsync(nameof(MyItemsPage));
     }
-
-
 
     [RelayCommand]
     private async Task NavigateToUserListAsync()
@@ -111,7 +113,7 @@ public partial class MainViewModel : BaseViewModel
             return;
         }
 
-        await Shell.Current.GoToAsync("UserListPage");
+        await Shell.Current.GoToAsync(nameof(UserListPage));
     }
 
     [RelayCommand]

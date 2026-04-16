@@ -30,12 +30,19 @@ public class ItemService : IItemService
 
     public async Task<List<Item>> GetItemsAsync()
     {
+  
         await AddJwtHeaderAsync();
 
         var response = await _httpClient.GetAsync("/items");
+
+        Console.WriteLine($"DEBUG: GetItemsAsync response status: {response.StatusCode}");
+
         response.EnsureSuccessStatusCode();
 
         var json = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine($"DEBUG: Items JSON: {json}");
+
 
         var result = JsonSerializer.Deserialize<ItemsResponse>(json, new JsonSerializerOptions
         {
