@@ -8,8 +8,9 @@ RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
     && rm dotnet-install.sh
 
 # Install Java JDK (required for Android SDK) and unzip
-RUN apt-get update && apt-get install -y openjdk-21-jdk unzip \
-    && ln -sfn "$(dirname $(dirname $(readlink -f $(which javac))))" /usr/lib/jvm/java-21
+RUN apt-get update && apt-get install -y openjdk-17-jdk unzip \
+    && ln -sfn /usr/lib/jvm/java-17-openjdk-amd64 /usr/lib/jvm/java-17
+
 
 # Pre-install NuGet workload packs that fail over Docker Desktop's virtualised network.
 # The script downloads each pack in 8 MB Range chunks, bypassing the connection drops
@@ -22,7 +23,7 @@ RUN dotnet workload install maui-android --skip-manifest-update
 
 # Install Android SDK command-line tools
 ENV ANDROID_HOME=/opt/android-sdk
-ENV JAVA_HOME=/usr/lib/jvm/java-21
+ENV JAVA_HOME=/usr/lib/jvm/java-17
 RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
     && wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip \
     && unzip commandlinetools-linux-*.zip -d ${ANDROID_HOME}/cmdline-tools \
@@ -34,7 +35,7 @@ RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
 RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses && \
     ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager \
       "platform-tools" \
-      "platforms;android-35" \
-      "build-tools;35.0.0"
+      "platforms;android-36" \
+      "build-tools;36.0.0"
 
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
