@@ -1,0 +1,38 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RentalApp.Views.ItemPage">
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+
+            <Label Text="Manage Items" FontSize="24" HorizontalOptions="Center" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Entry Placeholder="Item Name" Text="{Binding Name}" />
+            <Entry Placeholder="Description" Text="{Binding Description}" />
+
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Button Text="Add" Command="{Binding AddItemCommand}" />
+                <Button Text="Edit" Command="{Binding EditItemCommand}" />
+                <Button Text="Delete" Command="{Binding DeleteItemCommand}" />
+            </StackLayout>
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding HasError}" />
+
+            <CollectionView ItemsSource="{Binding Items}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Margin="5" Padding="10" BorderColor="Gray">
+                            <StackLayout>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Description}" FontSize="12" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
