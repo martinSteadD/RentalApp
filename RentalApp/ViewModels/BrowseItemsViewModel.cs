@@ -101,7 +101,7 @@ public partial class BrowseItemsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task SelectItemAsync(Item item)
+    private async Task SelectItem(Item item)
     {
         if (item == null)
             return;

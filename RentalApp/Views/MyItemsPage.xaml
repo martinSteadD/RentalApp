@@ -8,7 +8,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add"
                      IconImageSource="add.png"
-                     Command="{Binding CreateItemCommand}" />
+                     Command="{Binding GoToCreateItemCommand}" />
     </ContentPage.ToolbarItems>
 
     <RefreshView IsRefreshing="{Binding IsBusy}"
@@ -26,7 +26,7 @@
                            FontSize="16"
                            HorizontalOptions="Center" />
                     <Button Text="Add Your First Item"
-                            Command="{Binding CreateItemCommand}"
+                            Command="{Binding GoToCreateItemCommand}"
                             BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
                             TextColor="White"
                             CornerRadius="8" />
@@ -40,19 +40,21 @@
                             BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
                         <VerticalStackLayout>
                             <Label Text="{Binding Title}"
-                                   FontSize="18"
-                                   FontAttributes="Bold" />
+                                FontSize="18"
+                                FontAttributes="Bold" />
+
                             <Label Text="{Binding Description}"
-                                   FontSize="14"
-                                   TextColor="Gray" />
-                            <Label Text="{Binding Category}"
-                                   FontSize="12"
-                                   TextColor="DarkGray" />
+                                FontSize="14"
+                                TextColor="Gray" />
+
+                            <!-- FIXED: CategoryName instead of Category -->
+                            <Label Text="{Binding CategoryName}"
+                                FontSize="12"
+                                TextColor="DarkGray" />
                         </VerticalStackLayout>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
         </CollectionView>
     </RefreshView>
 

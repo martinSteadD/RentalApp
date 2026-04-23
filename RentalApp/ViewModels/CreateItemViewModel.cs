@@ -83,7 +83,11 @@ public partial class CreateItemViewModel : BaseViewModel
             OwnerId = CurrentUser!.Id,
             OwnerName = $"{CurrentUser.FirstName} {CurrentUser.LastName}",
             IsAvailable = true,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+
+                    // Temporary dummy coordinates
+            Latitude = 0,
+            Longitude = 0
         };
 
         // Send to API (mock API returns success but does not persist)

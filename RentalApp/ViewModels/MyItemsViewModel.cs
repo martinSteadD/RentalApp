@@ -5,6 +5,8 @@ using RentalApp.Database.Data;
 using RentalApp.Database.Models;
 using RentalApp.Services;
 using System.Collections.ObjectModel;
+using RentalApp.Views;
+
 
 namespace RentalApp.ViewModels;
 
@@ -16,19 +18,25 @@ public partial class MyItemsViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<ItemEntity> myItems = new();
 
+    [ObservableProperty]
+    private ItemEntity? selectedItem;
+
+    private readonly IItemService _itemService;
+
     public MyItemsViewModel(
         AppDbContext db,
         IAuthenticationService authService,
         INavigationService navigationService,
-        CategoryService categoryService)
+        CategoryService categoryService,
+        IItemService itemService)
         : base(authService, navigationService)
     {
         _db = db;
         _categoryService = categoryService;
+        _itemService = itemService;
 
         Title = "My Items";
 
-        _ = LoadMyItemsAsync();
     }
 
     [RelayCommand]
@@ -40,21 +48,46 @@ public partial class MyItemsViewModel : BaseViewModel
 
             var userId = CurrentUser!.Id;
 
-            // Load items from SQLite
+            // Try API first
+            var allItems = await _itemService.GetItemsAsync(); // GET /items
+            var apiItems = allItems.Where(i => i.OwnerId == userId).ToList();
+
+
+            if (apiItems != null && apiItems.Any())
+            {
+                // Clear local DB
+                var localItems = _db.Items.Where(i => i.OwnerId == userId);
+                _db.Items.RemoveRange(localItems);
+                await _db.SaveChangesAsync();
+
+                // Insert API items into SQLite
+                foreach (var apiItem in apiItems)
+                {
+                    var entity = new ItemEntity
+                    {
+                        Id = apiItem.Id,
+                        Title = apiItem.Title ?? string.Empty,
+                        Description = apiItem.Description ?? string.Empty,
+                        DailyRate = apiItem.DailyRate ?? 0,
+                        CategoryId = apiItem.CategoryId ?? 0,
+                        CategoryName = apiItem.Category ?? "Unknown",
+                        OwnerId = apiItem.OwnerId ?? 0,
+                        OwnerName = apiItem.OwnerName ?? "Unknown",
+                        CreatedAt = apiItem.CreatedAt ?? DateTime.UtcNow,
+                        IsAvailable = apiItem.IsAvailable ?? true
+                    };
+
+                    _db.Items.Add(entity);
+                }
+
+                await _db.SaveChangesAsync();
+            }
+
+            // Load from SQLite (API or offline)
             var items = await _db.Items
                 .Where(i => i.OwnerId == userId)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
-
-            // Load categories from API (or local if you later store them)
-            var categories = await _categoryService.GetCategoriesAsync();
-
-            // Map CategoryId -> CategoryName
-            foreach (var item in items)
-            {
-                var cat = categories.FirstOrDefault(c => c.Id == item.CategoryId);
-                item.CategoryName = cat?.Name ?? "Unknown";
-            }
 
             MyItems = new ObservableCollection<ItemEntity>(items);
         }
@@ -68,6 +101,7 @@ public partial class MyItemsViewModel : BaseViewModel
         }
     }
 
+
     [RelayCommand]
     private async Task SelectItemAsync(ItemEntity item)
     {
@@ -79,4 +113,16 @@ public partial class MyItemsViewModel : BaseViewModel
             { "Item", item }
         });
     }
+
+    [RelayCommand]
+    private async Task GoToCreateItemAsync()
+    {
+        await Shell.Current.GoToAsync($"/{nameof(CreateItemPage)}");
+    }
+
+
+
+
+
+
 }

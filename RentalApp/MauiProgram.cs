@@ -1,10 +1,15 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using CommunityToolkit.Maui;
 using RentalApp.ViewModels;
 using RentalApp.Database.Data;
 using RentalApp.Views;
 using RentalApp.Services;
+
+// Required for disabling Android ripple
+using Microsoft.Maui.Controls.Handlers.Items;
+using Android.Graphics.Drawables;
 
 namespace RentalApp;
 
@@ -15,11 +20,27 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+
+        //  Register the CollectionView handler
+        builder.ConfigureMauiHandlers(handlers =>
+        {
+            handlers.AddHandler<CollectionView, CollectionViewHandler>();
+        });
+
+        //  Disable Android ripple highlight
+        CollectionViewHandler.Mapper.AppendToMapping("NoRipple", (handler, view) =>
+        {
+#if ANDROID
+            handler.PlatformView.Foreground =
+                new ColorDrawable(Android.Graphics.Color.Transparent);
+#endif
+        });
 
         // Register SQLite DbContext
         builder.Services.AddDbContext<AppDbContext>();
@@ -62,7 +83,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<SettingsPage>();
 
-        // ⭐ IMPORTANT: Browse Items DI registration
+        // Browse Items
         builder.Services.AddTransient<BrowseItemsViewModel>();
         builder.Services.AddTransient<BrowseItemsPage>();
 

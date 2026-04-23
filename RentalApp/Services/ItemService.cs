@@ -9,12 +9,13 @@ public class ItemService : IItemService
     private readonly HttpClient _httpClient;
     private readonly TokenStore _tokenStore;
     private readonly ApiClient _apiClient;
-
-    public ItemService(HttpClient httpClient, TokenStore tokenStore, ApiClient apiClient)
+    private readonly IAuthenticationService _authService;
+    public ItemService(HttpClient httpClient, TokenStore tokenStore, ApiClient apiClient, IAuthenticationService authService)
     {
         _httpClient = httpClient;
         _tokenStore = tokenStore;
         _apiClient = apiClient;
+        _authService = authService;
     }
 
     private async Task AddJwtHeaderAsync()
@@ -28,12 +29,11 @@ public class ItemService : IItemService
         }
     }
 
-    public async Task<List<Item>> GetItemsAsync()
+        public async Task<List<Item>> GetItemsAsync(int page = 1, int pageSize = 100)
     {
-  
         await AddJwtHeaderAsync();
 
-        var response = await _httpClient.GetAsync("/items");
+        var response = await _httpClient.GetAsync($"/items?page={page}&pageSize={pageSize}");
 
         Console.WriteLine($"DEBUG: GetItemsAsync response status: {response.StatusCode}");
 
@@ -43,7 +43,6 @@ public class ItemService : IItemService
 
         Console.WriteLine($"DEBUG: Items JSON: {json}");
 
-
         var result = JsonSerializer.Deserialize<ItemsResponse>(json, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
@@ -51,6 +50,7 @@ public class ItemService : IItemService
 
         return result?.Items ?? new List<Item>();
     }
+
 
     public async Task<Item?> GetItemByIdAsync(int id)
     {
@@ -92,4 +92,21 @@ public class ItemService : IItemService
         var response = await _httpClient.DeleteAsync($"/items/{id}");
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<List<Item>> GetMyItemsAsync()
+    {
+        await AddJwtHeaderAsync();
+
+        // Get ALL items from the API
+        var allItems = await GetItemsAsync();
+
+        var userId = _authService.CurrentUser!.Id;
+
+        // Filter client-side
+        return allItems
+            .Where(i => i.OwnerId == userId)
+            .ToList();
+    }
+
+
 }

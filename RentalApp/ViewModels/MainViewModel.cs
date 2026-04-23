@@ -91,7 +91,7 @@ public partial class MainViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToBrowseItemsAsync()
     {
-        // ⭐ FIXED: Use nameof() so DI resolves BrowseItemsPage correctly
+        //  DI resolves BrowseItemsPage correctly
         await Shell.Current.GoToAsync(nameof(BrowseItemsPage));
     }
 

@@ -39,6 +39,48 @@
                    FontSize="14"
                    TextColor="Gray" />
 
+              <!-- Daily Rate -->
+              <Label Text="Daily Rate"
+                     FontSize="14"
+                     FontAttributes="Bold" />
+              <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}"
+                     FontSize="14"
+                     TextColor="Gray" />
+
+              <!-- Availability -->
+              <Label Text="Availability"
+                     FontSize="14"
+                     FontAttributes="Bold" />
+              <Label Text="{Binding Item.IsAvailable, Converter={StaticResource BoolToAvailabilityConverter}}"
+                     FontSize="14"
+                     TextColor="Gray" />
+
+              <!-- Owner Rating -->
+              <Label Text="Owner Rating"
+                     FontSize="14"
+                     FontAttributes="Bold" />
+              <Label Text="{Binding Item.OwnerRating, StringFormat='{0:F1} ★'}"
+                     FontSize="14"
+                     TextColor="Gray" />
+
+              <!-- Created Date -->
+              <Label Text="Listed On"
+                     FontSize="14"
+                     FontAttributes="Bold" />
+              <Label Text="{Binding Item.CreatedAt, StringFormat='{0:dd MMM yyyy}'}"
+                     FontSize="14"
+                     TextColor="Gray" />
+
+              <!-- Distance (placeholder for later) -->
+              <Label Text="Distance"
+                     FontSize="14"
+                     FontAttributes="Bold" />
+              <Label Text="Calculating..."
+                     FontSize="14"
+                     TextColor="Gray" />
+
+
+
             <!-- Rent Button -->
             <Button Text="Rent This Item"
                     Command="{Binding RentItemCommand}"
