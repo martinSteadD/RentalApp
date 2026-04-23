@@ -1,5 +1,6 @@
 using RentalApp.Database.Models;
 
+
 namespace RentalApp.Database.Repositories;
 
 public interface IItemRepository
